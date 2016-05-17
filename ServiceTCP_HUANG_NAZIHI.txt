@@ -1,0 +1,132 @@
+Liste des requêtes utilisateurs:
+
+Ajout une nouvelle idée avec un fichier et un utilisateur identifié par son nom et son mail. Si utilisateur non existant il est crée.
+-new fichier name mail
+Détail argument
+fichier : Un fichier txt
+name : Un nom d’utilisateur sous forme d’une chaine de caractère
+mail : Le mail de l’utilisateur sous forme d’une chaine de caractère
+Valeurs de retour : Un texte comme quoi l’idée a été ajoutée ou pas.
+En Java la valeur de retour est un ClientObjet(args,object).
+L’object est un String() et l’args a comme valeur ‘-new’
+
+Lister toutes les idées :
+-listAll
+Valeurs de retour : une liste d’idée avec les id des idées.
+En Java la valeur de retour est un ClientObjet(args,object).
+L’object est une Map<Integer, Idea> et l’args a comme valeur ‘-listAll’
+
+Récupérer une idée
+-get id
+Détail argument
+id : Un entier représentant l’idée que l’on veut récupérer
+Valeur de retour : une idée.
+
+Modifier une id
+-set fichier id
+Détail argument : 
+fichier : Un fichier txt
+id : Un entier représentant l’idée que l’on veut modifier
+Valeur de retour : Un texte comme quoi l’idée à été modifié ou pas.
+
+Avoir les contributeurs d’une idée 
+-getContributor id
+Détail argument :
+id : Un entier représentant l’idée dont on veut avoir les contributeurs
+Valeur de retour : une liste de contributeur.
+
+
+Nous communiquons avec des objets et nous avons choisis dans un premier temps de développer les commandes -new et -listAll
+
+Programmation cotée Client
+Si un client veut communiquer avec notre serveur il aura besoin des .class de plusieurs Objet : 
+
+ClientObject
+Cet objet est celui qui est transféré entre le client et le serveur. Il contient deux variables. 
+    private String arg;
+    private Object object;
+La première variable (arg) permet d’indiquer qu’elle est la commande qui a été demandée par l’utilisateur. 
+La deuxième permet de stocker l’objet qui correspond à la commande passée par la première variable.
+
+public class ClientObject implements Serializable {
+    private String arg;
+    private Object object;
+
+    public ClientObject(String arg, Object object) {
+        this.arg = arg;
+        this.object = object;
+    }
+
+    public String getArg() {
+        return arg;
+    }
+
+    public Object getObject() {
+        return object;
+    }
+}
+
+
+User 
+Le client va avoir besoin de pouvoir manipuler les différents utilisateurs des idées qu’il l’intéresse et s’authentifier lui même auteur d’une idée. Pour cela nous avons crée un objet User dont voici une version simplifiée suffisante pour développer.
+
+public class User implements Serializable {
+    private static final AtomicInteger count = new AtomicInteger(0);
+    private int id;
+    private String identifiant;
+    private String email;
+
+
+    public User(String identifiant, String email) {
+        this.identifiant = identifiant;
+        this.email = email;
+        this.id=count.incrementAndGet();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getIdentifiant() {
+        return identifiant;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}
+
+
+
+Idea 
+Le client va avoir besoin de créer une idée et de manipuler celle qui récupère. Pour cela nous avons créé un objet idea dont voici une version simplifiée suffisante pour développer un client.
+
+public class Idea implements Serializable {
+    private User author;
+    private content idea;
+
+
+    public Idea(File content, User author) {
+        this.content = content2;
+        this.author = author;
+    }
+
+
+    public String getName() {
+        return author.getIdentifiant();
+    }
+
+    public String getEmail() {
+        return author.getEmail();
+    }
+
+    public File getIdea() {
+        return idea;
+    }
+}
+
+
+Exemple d’implémentation Client pour -new
+
+Idea idea = new Idea (toto.txt, new User(thibaut,thibaut129@gmail.com);
+ClientObject clientObject = new ClientObject("-new", idea); 
